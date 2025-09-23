@@ -25,17 +25,6 @@ class MainActivity : ComponentActivity() {
             val intent = Intent(this, SecondActivity::class.java)
             startActivity(intent)
         }
-        enableEdgeToEdge()
-        setContent {
-            MyApplication_test1Theme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
-        }
     }
 }
 
