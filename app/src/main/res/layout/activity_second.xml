@@ -15,6 +15,18 @@ android:layout_height="match_parent">
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintEnd_toEndOf="parent" />
 
+
+<ImageView
+    android:id="@+id/imageView"
+    android:layout_width="244dp"
+    android:layout_height="501dp"
+    app:layout_constraintBottom_toTopOf="@+id/id_successful_enter"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/toolbar"
+    app:layout_constraintVertical_chainStyle="packed"
+    app:srcCompat="@drawable/succcess_img" />
+
 <TextView
     android:id="@+id/id_successful_enter"
     android:layout_width="wrap_content"
@@ -40,7 +52,6 @@ android:layout_height="match_parent">
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@+id/id_successful_enter" />
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
