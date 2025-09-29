@@ -3,19 +3,32 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center">
+    android:gravity="center"
+    >
+
+    <Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginTop="0dp"
+        android:background="@android:color/holo_blue_bright"
+        />
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="103dp"
-        android:text="@string/screen_text_1" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/screen_text_1"
+        android:textColor="@android:color/black"
+        android:textSize="30dp"
+        android:textStyle="bold"
+        android:gravity="center"/>
 
     <Button
         android:id="@+id/next_screen_button"
         android:layout_width="239dp"
         android:layout_height="142dp"
         android:layout_gravity="center"
-        android:text="NEXT SCREEN" />
+        android:text="NEXT SCREEN"
+        android:gravity="center"/>
 
 </LinearLayout>
 
