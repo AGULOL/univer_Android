@@ -3,6 +3,6 @@
     <string name="screen_text_2">Экран 2</string>
     <string name="screen_text_1">Вход в приложение</string>
     <string name="back_button">BACK</string>
-    <string name="next_screen_button">NEXT SCREEN</string>
+    <string name="next_screen_button">NEXT</string>
 
 </resources>
