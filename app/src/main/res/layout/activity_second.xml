@@ -18,14 +18,16 @@ android:layout_height="match_parent">
 
 <ImageView
     android:id="@+id/imageView"
-    android:layout_width="244dp"
-    android:layout_height="501dp"
+    android:layout_width="0dp"
+    android:layout_height="270dp"
+    android:scaleType="fitCenter"
+    android:contentDescription="@string/image_description"
     app:layout_constraintBottom_toTopOf="@+id/id_successful_enter"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@+id/toolbar"
     app:layout_constraintVertical_chainStyle="packed"
-    app:srcCompat="@drawable/succcess_img" />
+    android:src="@drawable/succcess_img" />
 
 <TextView
     android:id="@+id/id_successful_enter"
