@@ -3,7 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/loginFragment">  <!-- Начальный фрагмент -->
+    app:startDestination="@id/RecyclerViewFragment">  <!-- Начальный фрагмент -->
+
+    <fragment
+        android:id="@+id/RecyclerViewFragment"
+        android:name="com.example.myapplication_test1.LoginFragment"
+        android:label="RecyclerViewFragment"
+        tools:layout="@layout/fragment_list">
+<!--        <action-->
+<!--            android:id="@+id/action_loginFragment_to_secondFragment"-->
+<!--            app:destination="@id/secondFragment"-->
+<!--            app:popUpTo="@id/loginFragment"-->
+<!--            app:popUpToInclusive="true"/>  &lt;!&ndash; Включает LoginFragment в удаление &ndash;&gt;-->
+    </fragment>
 
     <fragment
         android:id="@+id/loginFragment"
