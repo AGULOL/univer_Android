@@ -1,11 +1,13 @@
 import org.jetbrains.kotlin.storage.CacheResetOnProcessCanceled.enabled
 
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    //alias(libs.plugins.kotlin.serialization)
 
+//    alias(libs.plugins.kotlinSerialization)
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.0.21"
 }
 
 android {
@@ -41,10 +43,16 @@ android {
     buildFeatures {
         viewBinding = true
     }
-//    dataBinding {
-//        enabled   true
-//    }
 }
+
+//kotlin {
+//    sourceSets.all {
+//        languageSettings {
+//            // Разрешаем использование InternalSerializationApi для всего модуля
+//            optIn("kotlinx.serialization.InternalSerializationApi")
+//        }
+//    }
+//}
 
 dependencies {
 
@@ -79,10 +87,18 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     // Ktor Client
+    implementation("io.ktor:ktor-client-core:2.3.7")
     implementation("io.ktor:ktor-client-android:2.3.7")
     implementation("io.ktor:ktor-client-content-negotiation:2.3.7")
 
     // Kotlin Serialization для парсинга JSON
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.7")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    implementation("io.coil-kt:coil:2.5.0") // для загрузки изображений
 
+    ///
+    implementation(libs.ktor)
+    implementation(libs.ktor.client)
+    implementation(libs.ktor.serialization)
+    implementation(libs.ktor.negotiation)
 }
