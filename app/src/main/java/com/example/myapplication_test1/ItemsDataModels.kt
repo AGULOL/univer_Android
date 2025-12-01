@@ -1,9 +1,9 @@
-@file:OptIn(InternalSerializationApi::class)
-
 package com.example.myapplication_test1
 
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
+
+// Добавляем enum для типов
+enum class ItemType { CHARACTER, LOCATION, ERROR }
 
 @Serializable
 data class ApiResponse<T>(
@@ -52,11 +52,11 @@ data class LocationReference(
     val url: String
 )
 
-// Обновленный ItemData для поддержки URL изображений
+// Обновленный ItemData с enum
 data class ItemData(
     val title: String,
     val subtitle: String,
     val imageUrl: String? = null,
     val imageRes: Int? = null,
-    val type: String // "character" или "location"
+    val type: ItemType
 )

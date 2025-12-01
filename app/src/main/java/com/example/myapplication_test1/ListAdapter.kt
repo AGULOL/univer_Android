@@ -10,95 +10,102 @@ import coil.load
 import android.net.Uri
 import androidx.core.net.toUri
 
-class ListAdapter(private val items: List<ItemData>) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 
-    companion object {
-        private const val TYPE_CHARACTER = 0
-        private const val TYPE_LOCATION = 1
-    }
+import com.example.myapplication_test1.databinding.ItemCharacterLayoutBinding
+import com.example.myapplication_test1.databinding.ItemLocationLayoutBinding
 
-    // ViewHolder для персонажей
-    class CharacterViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val title: TextView = view.findViewById(R.id.item_title)
-        val subtitle: TextView = view.findViewById(R.id.item_subtitle)
-        val image: ImageView = view.findViewById(R.id.item_image)
-    }
-
-    // ViewHolder для локаций
-    class LocationViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val title: TextView = view.findViewById(R.id.location_title)
-        val type: TextView = view.findViewById(R.id.location_type)
-        val dimension: TextView = view.findViewById(R.id.location_dimension)
-//        val icon: ImageView = view.findViewById(R.id.location_icon)
-    }
+class ListAdapter : ListAdapter<ItemData, RecyclerView.ViewHolder>(ItemDiffCallback) {
 
     override fun getItemViewType(position: Int): Int {
-        return when (items[position].type) {
-            "character" -> TYPE_CHARACTER
-            "location" -> TYPE_LOCATION
-            else -> TYPE_CHARACTER
+        return when (getItem(position).type) {
+            ItemType.CHARACTER -> VIEW_TYPE_CHARACTER
+            ItemType.LOCATION -> VIEW_TYPE_LOCATION
+            ItemType.ERROR -> VIEW_TYPE_CHARACTER
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            TYPE_CHARACTER -> {
-                val view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.item_character_layout, parent, false)
-                CharacterViewHolder(view)
+            VIEW_TYPE_CHARACTER -> {
+                val binding = ItemCharacterLayoutBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+                CharacterViewHolder(binding)
             }
-            TYPE_LOCATION -> {
-                val view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.item_location_layout, parent, false)
-                LocationViewHolder(view)
+            VIEW_TYPE_LOCATION -> {
+                val binding = ItemLocationLayoutBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+                LocationViewHolder(binding)
             }
-            else -> {
-                val view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.item_character_layout, parent, false)
-                CharacterViewHolder(view)
-            }
+            else -> throw IllegalArgumentException("Unknown view type: $viewType")
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val item = items[position]
-
+        val item = getItem(position)
         when (holder) {
-            is CharacterViewHolder -> {
-                println(item)
-                holder.title.text = item.title
-                holder.subtitle.text = item.subtitle
+            is CharacterViewHolder -> holder.bind(item)
+            is LocationViewHolder -> holder.bind(item)
+        }
+    }
 
-                if (!item.imageUrl.isNullOrEmpty())
-                {
-//                        //crossfade(true)
-//                        //placeholder(R.drawable.ic_cloud_upload)
-//                        //error(R.drawable.ic_cloud_upload)
-//                    }
-                    holder.image.setImageURI(item.imageUrl.toUri())
-//
-                } else {
-                    holder.image.setImageResource(R.drawable.ic_cloud_upload)
-                }
-            }
-            is LocationViewHolder -> {
-                // Разбиваем subtitle на тип и измерение
-                val parts = item.subtitle.split(" - ")
-                holder.title.text = item.title
-                if (parts.size >= 2) {
-                    holder.type.text = "Тип: ${parts[0]}"
-                    holder.dimension.text = "Измерение: ${parts[1]}"
-                } else {
-                    holder.type.text = item.subtitle
-                    holder.dimension.text = ""
-                }
+    inner class CharacterViewHolder(
+        private val binding: ItemCharacterLayoutBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
 
-                // Устанавливаем иконку для локации
-//                holder.icon.setImageResource(item.imageRes ?: R.drawable.ic_bank)
+        fun bind(item: ItemData) {
+            binding.itemTitle.text = item.title
+            binding.itemSubtitle.text = item.subtitle
+
+            if (!item.imageUrl.isNullOrEmpty()) {
+                binding.itemImage.load(item.imageUrl) {
+                    crossfade(true)
+                    placeholder(R.drawable.ic_cloud_upload)
+                    error(R.drawable.ic_cloud_upload)
+                }
+            } else {
+                binding.itemImage.setImageResource(R.drawable.ic_cloud_upload)
             }
         }
     }
 
-    override fun getItemCount() = items.size
+    inner class LocationViewHolder(
+        private val binding: ItemLocationLayoutBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(item: ItemData) {
+            binding.locationTitle.text = item.title
+
+            val parts = item.subtitle.split(" - ")
+            if (parts.size >= 2) {
+                binding.locationType.text = "Тип: ${parts[0]}"
+                binding.locationDimension.text = "Измерение: ${parts[1]}"
+            } else {
+                binding.locationType.text = item.subtitle
+                binding.locationDimension.text = ""
+            }
+        }
+    }
+
+    companion object {
+        private const val VIEW_TYPE_CHARACTER = 0
+        private const val VIEW_TYPE_LOCATION = 1
+
+        private object ItemDiffCallback : DiffUtil.ItemCallback<ItemData>() {
+            override fun areItemsTheSame(oldItem: ItemData, newItem: ItemData): Boolean {
+                return oldItem.title == newItem.title && oldItem.type == newItem.type
+            }
+
+            override fun areContentsTheSame(oldItem: ItemData, newItem: ItemData): Boolean {
+                return oldItem == newItem
+            }
+        }
+    }
 }

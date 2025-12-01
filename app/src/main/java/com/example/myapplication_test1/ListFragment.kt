@@ -10,89 +10,52 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.launch
 
+
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import com.example.myapplication_test1.databinding.FragmentListBinding
+
+
 class ListFragment : Fragment() {
 
-    private lateinit var recyclerView: RecyclerView
+    private lateinit var binding: FragmentListBinding
     private lateinit var adapter: ListAdapter
-    private var items: List<ItemData> = emptyList()
-    private val apiService = RickAndMortyService()
+    private lateinit var viewModel: ListViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_list, container, false)
+    ): View {
+        binding = FragmentListBinding.inflate(inflater, container, false)
 
-        recyclerView = view.findViewById(R.id.recycler_view)
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        // Простая инициализация
+        val database = AppDatabase.getInstance(requireContext())
+        val repository = RickAndMortyRepository(
+            apiService = RickAndMortyService(),
+            dao = database.rickAndMortyDao()
+        )
+        viewModel = ListViewModel(repository)
 
-        adapter = ListAdapter(items)
-        recyclerView.adapter = adapter
-
-        // Загрузка данных из API
-        loadDataFromApi()
-
-        return view
+        return binding.root
     }
 
-    private fun loadDataFromApi() {
-        lifecycleScope.launch {
-            try {
-                // Загружаем  персонажей
-                val characters = apiService.getCharacters(listOf(1, 2, 3, 4, 5,27))
-                // Загружаем  локации
-                val locations = apiService.getLocations(listOf(1, 2, 3, 4, 10))
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-                // Преобразуем в ItemData
-                val characterItems = characters.map { character ->
-                    ItemData(
-                        title = character.name,
-                        subtitle = "${character.species} - ${character.status}",
-                        imageUrl = character.image,
-                        type = "character"
+        adapter = ListAdapter()
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerView.adapter = adapter
 
-                    )
-                }
+        setupObservers()
+    }
 
-                val locationItems = locations.map { location ->
-                    ItemData(
-                        title = location.name,
-                        subtitle = "${location.type} - ${location.dimension}",
-                        imageRes = R.drawable.ic_bank, // используем иконку для локаций
-                        type = "location"
-                    )
-                }
-
-                // Объединяем списки
-//                items = characterItems + locationItems
-                items = (characterItems + locationItems).shuffled()
-
-                adapter = ListAdapter(items)
-                recyclerView.adapter = adapter
-
-            } catch (e: Exception) {
-                e.printStackTrace()
-                // В случае ошибки показываем локальные данные
-                items = createListItems()
-                adapter = ListAdapter(items)
-                recyclerView.adapter = adapter
+    private fun setupObservers() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.items.collect { items ->
+                adapter.submitList(items)
             }
         }
-    }
-
-    private fun createListItems(): List<ItemData> {
-        return listOf(
-            ItemData(
-                title = "Ошибка загрузки",
-                subtitle = "Проверьте подключение",
-                imageRes = R.drawable.ic_cloud_upload,
-                type = "error"
-            )
-        )
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        apiService.close()
     }
 }
